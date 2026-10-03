@@ -23,23 +23,16 @@ python -m pip install -r requirements.txt
 
 ## Start (Entwicklung)
 
-Ohne weitere Konfiguration startet die API mit dem Entwicklungs-Key
-`dev-api-key` — kopierbarer Startbefehl:
+Die API startet nur, wenn `API_KEY` in der Umgebung gesetzt ist — es gibt keinen
+Default-Wert. Einen eigenen Key wählen und exportieren (kopierbarer Startbefehl):
 
 ```bash
-python -m uvicorn app.main:app --port 8000
-```
-
-Derselbe Start mit explizit gesetztem `API_KEY` (empfohlen, damit der Key nicht
-vom Default abhängt):
-
-```bash
-export API_KEY="dev-api-key"          # macOS / Linux
+export API_KEY="dein-geheimer-api-key"          # macOS / Linux
 python -m uvicorn app.main:app --port 8000
 ```
 
 ```powershell
-$env:API_KEY = "dev-api-key"          # Windows (PowerShell)
+$env:API_KEY = "dein-geheimer-api-key"          # Windows (PowerShell)
 python -m uvicorn app.main:app --port 8000
 ```
 
@@ -51,10 +44,12 @@ API-Dokumentation unter `http://localhost:8000/docs`.
 | Variable       | Pflicht | Default                  | Beschreibung                                   |
 | -------------- | ------- | ------------------------ | ---------------------------------------------- |
 | `DATABASE_URL` | nein    | `sqlite:///./library.db` | Verbindungs-URL der Datenbank                  |
-| `API_KEY`      | nein    | `dev-api-key`            | API-Key für alle schreibenden Endpunkte        |
+| `API_KEY`      | ja      | –                        | API-Key für alle schreibenden Endpunkte        |
 
-Der `API_KEY`-Default `dev-api-key` ist nur für die lokale Entwicklung gedacht.
-In einem echten Betrieb **muss** `API_KEY` explizit gesetzt werden.
+`API_KEY` hat bewusst keinen Default: Der Start über die Ausführungsumgebung
+(`RUN.json`) erzeugt den Key pro Lauf automatisch (`generate`). Lokal setzt man
+ihn wie oben beschrieben selbst — es ist derselbe Wert, der anschließend im
+Header `X-API-Key` mitgeschickt werden muss.
 
 Die Datenbank (SQLite-Datei) und ihre Tabellen werden beim Start automatisch
 angelegt — es ist keine manuelle Migration nötig.
